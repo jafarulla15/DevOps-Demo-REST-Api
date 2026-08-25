@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME       = 'earn-dotnet-api'                       // change to your app's name
-        IMAGE_NAME     = '192.168.238.50:5000/earn-dotnet-api'   // <registry>/<app_name>
-        CONTAINER_NAME = 'earn-dotnet-api'                        // must match modules/nginx's upstream_container if fronted by Nginx
-        APP_PORT       = '8070'                                   // port the API listens on inside the container
-        DOCKER_NETWORK = 'monitoring'                             // shared network so Nginx can resolve this container by name
+        APP_NAME       = 'earn-dotnet-api'
+        IMAGE_NAME     = '192.168.238.50:5000/earn-dotnet-api'
+        CONTAINER_NAME = 'earn-dotnet-api'
+        APP_PORT       = '8070'
+        DOCKER_NETWORK = 'monitoring'
     }
 
     options {
@@ -15,35 +15,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Restore') {
-            steps {
-                sh 'dotnet restore'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'dotnet build --configuration Release --no-restore'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'dotnet test --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"'
-            }
-            post {
-                always {
-                    junit testResults: '**/test-results.trx', allowEmptyResults: true
-                }
-            }
-        }
-
-        stage('Publish') {
-            steps {
-                sh 'dotnet publish --configuration Release --no-build -o ./publish'
-            }
-        }
 
         stage('Docker Build') {
             steps {
